@@ -2,5 +2,6 @@
   "world_path": "D:\\obs",
   "backup_path": "D:\\__WorldBackups",
   "template": "%hh%-%MM%-%ss%  %dd%.%mm%.%yyyy%",
-  "drive_target_directory_id": "1f0sje0-X_TkCAvP_FE_5kPeUitsRYxNt"
+  "drive_target_directory_id": "1f0sje0-X_TkCAvP_FE_5kPeUitsRYxNt",
+  "keep_local_archives": true
 }
