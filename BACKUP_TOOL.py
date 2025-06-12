@@ -3,44 +3,44 @@ from datetime import datetime
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
-# functie care deschide si citeste configu
+# the function that reads the config
 def read_config():
     with open('config.json', 'r') as file:
         data = json.load(file)
         return data
 
-# functia care face rost de timp(data+ora) + schimba numele
-def change_template(nume: str):
+# the function which assign the name with the date and time using the config
+def change_template(name: str):
     now = datetime.now()
-    # variabile de timp separate
-    ora = now.strftime("%H")
-    minut = now.strftime("%M")
-    secunda = now.strftime("%S")
-    zi = now.strftime("%d")
-    luna = now.strftime("%m")
-    an = now.strftime("%Y")
-    nume = nume.replace("%hh%",ora).replace("%MM%", minut).replace("%ss%", secunda).replace("%dd%", zi).replace("%mm%", luna).replace("%yyyy%", an)
-    return nume
+    # separete time variabels
+    hour = now.strftime("%H")
+    minute = now.strftime("%M")
+    second = now.strftime("%S")
+    day = now.strftime("%d")
+    mounth = now.strftime("%m")
+    year = now.strftime("%Y")
+    name = name.replace("%hh%",hour).replace("%MM%", minute).replace("%ss%", second).replace("%dd%", day).replace("%mm%", mounth).replace("%yyyy%", year)
+    return name
 
-# functia care face arhiva
-def zip(nume,inp,out):
-    nume = nume
+# the function which is doing the archive
+def zip(name,inp,out):
+    name = name
     in_path = inp
     out_path = out
-    arhiva = shutil.make_archive(nume, 'zip', in_path)
-    cale_noua = os.path.join(out_path, os.path.basename(arhiva))
-    shutil.move(arhiva, cale_noua)
+    archive = shutil.make_archive(name, 'zip', in_path)
+    new_path = os.path.join(out_path, os.path.basename(archive))
+    shutil.move(archive, new_path)
 
-# functia de incarcare
-def incarcare(nume,folder_id):
-    file_path = nume
-    file = drive.CreateFile({'title': nume,
+# upload function
+def upload(name,folder_id):
+    file_path = name
+    file = drive.CreateFile({'title': name,
                             'parents': [{'id': folder_id}]})
     file.SetContentFile(file_path)
     file.Upload()
 
-# functia de stergere
-def stergere(path_arhiva,keep_archives):
+# erase function
+def erase(path_archive,keep_archives):
     file_list = drive.ListFile({'q': "title contains '.zip' and trashed=false"}).GetList()
     if len(file_list) <= 3:
         return
@@ -49,18 +49,18 @@ def stergere(path_arhiva,keep_archives):
         oldest_file = file_list[0]
         oldest_file.Delete()
     if not keep_archives:
-        os.remove(path_arhiva)
+        os.remove(path_archive)
 
 if __name__ == '__main__':
     # date config
     config = read_config()
-    nume_template = change_template(config["template"])
-    nume_arhiva = nume_template + ".zip"
-    path_arhiva = config["backup_path"] + "\\" + nume_arhiva
+    template_name = change_template(config["template"])
+    archive_name = template_name + ".zip"
+    path_archive = config["backup_path"] + "\\" + archive_name
     keep_archives = config["keep_local_archives"]
 
     # functia care face zipul
-    zip(nume_template,config["world_path"],config["backup_path"])
+    zip(template_name,config["target_path"],config["backup_path"])
 
     # autentificare la drive
     gauth = GoogleAuth()
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     drive = GoogleDrive(gauth)
 
     # functia incarcare in drive
-    incarcare(path_arhiva,config["drive_target_directory_id"])
+    upload(path_archive,config["drive_target_directory_id"])
 
     # functia stergere a cea mai veche in drive
-    stergere(path_arhiva,keep_archives)
+    erase(path_archive,keep_archives)
