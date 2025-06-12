@@ -1,0 +1,5 @@
+{
+  "world_path": "D:\\obs",
+  "backup_path": "D:\\__WorldBackups",
+  "template": "%hh%-%MM%-%ss%  %dd%.%mm%.%yyyy%"
+}
