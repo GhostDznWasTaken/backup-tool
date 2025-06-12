@@ -33,9 +33,8 @@ def zip(nume,inp,out):
     cale_noua = os.path.join(out_path, os.path.basename(arhiva))
     shutil.move(arhiva, cale_noua)
 
-def incarcare(nume):
+def incarcare(nume,folder_id):
     file_path = nume
-    folder_id = "1f0sje0-X_TkCAvP_FE_5kPeUitsRYxNt"
     file = drive.CreateFile({'title': nume,
                             'parents': [{'id': folder_id}]})
     file.SetContentFile(file_path)
@@ -76,6 +75,6 @@ if __name__ == '__main__':
     gauth.SaveCredentialsFile("mycreds.txt")
     drive = GoogleDrive(gauth)
     #functia incarcare in drive
-    incarcare(path_arhiva)
+    incarcare(path_arhiva,config["drive_target_directory_id"])
     #functia stergere a cea mai veche in drive
     stergere()
